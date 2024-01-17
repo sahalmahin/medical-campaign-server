@@ -25,7 +25,14 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
+    const campCollection = client.db("medicalDb").collection("camps");
 
+
+    // users related api
+    app.get('/camps', async (req, res) => {
+      const result = await campCollection.find().toArray();
+      res.send(result);
+    })
 
 
 
