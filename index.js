@@ -49,6 +49,11 @@ async function run() {
       res.send(result);
     })
 
+    app.post('/addCamp', async (req, res) => {
+      const addCamp = req.body;
+      const result = await addCollection.insertOne(addCamp);
+      res.send(result);
+    })
 
 
 
