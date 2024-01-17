@@ -26,6 +26,7 @@ async function run() {
     // await client.connect();
 
     const campCollection = client.db("medicalDb").collection("camps");
+    const addCollection = client.db("medicalDb").collection("addCamp");
 
 
     // users related api
@@ -41,6 +42,12 @@ async function run() {
       res.send(result);
     })
 
+    // addCamp
+    app.get('/addCamp', async (req, res) => {
+
+      const result = await addCollection.find().toArray();
+      res.send(result);
+    })
 
 
 
