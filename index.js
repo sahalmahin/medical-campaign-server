@@ -27,6 +27,7 @@ async function run() {
 
     const campCollection = client.db("medicalDb").collection("camps");
     const addCollection = client.db("medicalDb").collection("addCamp");
+    const addCampCollection = client.db("medicalDb").collection("add-a-camp");
 
     // users related api
     app.get('/camps', async (req, res) => {
@@ -52,6 +53,13 @@ async function run() {
     app.post('/addCamp', async (req, res) => {
       const addCamp = req.body;
       const result = await addCollection.insertOne(addCamp);
+      res.send(result);
+    })
+
+    // add a camp
+    app.post('/add-a-camp', async (req, res) => {
+      const camp = req.body;
+      const result = await addCampCollection.insertOne(camp);
       res.send(result);
     })
 
@@ -110,16 +118,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Bistro boss is sitting on port ${port}`);
 })
-
-/**
- * --------------------------------
- *      NAMING CONVENTION
- * --------------------------------
- * app.get('/users')
- * app.get('/users/:id')
- * app.post('/users')
- * app.put('/users/:id')
- * app.patch('/users/:id')
- * app.delete('/users/:id')
- * 
-*/
