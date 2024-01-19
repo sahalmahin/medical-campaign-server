@@ -75,26 +75,28 @@ async function run() {
       res.send(result);
     })
 
-    app.patch('/add-a-camp/:id', async (req, res) => {
-      const item = req.body;
+    app.put('/add-a-camp/:id', async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: new ObjectId(id) }
-      const updatedDoc = {
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedCamp = req.body;
+      const camp = {
         $set: {
-          camp: item.camp,
-          fees: item.fees,
-          venue: item.venue,
-          service: item.service,
-          health: item.health,
-          audience: item.audience,
-          photo: item.photo,
-          description: item.description,
+          camp: updatedCamp.camp,
+          fees: updatedCamp.fees,
+          venue: updatedCamp.venue,
+          service: updatedCamp.service,
+          health: updatedCamp.health,
+          audience: updatedCamp.audience,
+          photo: updatedCamp.photo,
+          description: updatedCamp.description,
         }
       }
-
-      const result = await addCampCollection.updateOne(filter, updatedDoc)
+      const result = await addCampCollection.updateOne(filter, camp, options);
       res.send(result);
-    })
+  })
+
+
 
     app.delete('/add-a-camp/:id', async (req, res) => {
       const id = req.params.id;
