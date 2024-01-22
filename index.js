@@ -26,49 +26,23 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
+    const userCollection = client.db("medicalDb").collection("users");
     const campCollection = client.db("medicalDb").collection("camps");
     const addCollection = client.db("medicalDb").collection("addCamp");
     const addCampCollection = client.db("medicalDb").collection("add-a-camp");
     const paymentCollection = client.db("medicalDb").collection("payment");
     const reviewCollection = client.db("medicalDb").collection("reviews");
 
-    // jwt related api
-    // app.post('/jwt', async (req, res) => {
-    //   const user = req.body;
-    //   const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-    //   res.send({ token });
-    // })
-    // middlewares 
-    // const verifyToken = (req, res, next) => {
-    //   // console.log('inside verify token', req.headers.authorization);
-    //   if (!req.headers.authorization) {
-    //     return res.status(401).send({ message: 'unauthorized access' });
-    //   }
-    //   const token = req.headers.authorization.split(' ')[1];
-    //   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    //     if (err) {
-    //       return res.status(401).send({ message: 'unauthorized access' })
-    //     }
-    //     req.decoded = decoded;
-    //     next();
-    //   })
-    // }
-    // // use verify admin after verifyToken
-    // const verifyAdmin = async (req, res, next) => {
-    //   const email = req.decoded.email;
-    //   const query = { email: email };
-    //   const user = await userCollection.findOne(query);
-    //   const isAdmin = user?.role === 'admin';
-    //   if (!isAdmin) {
-    //     return res.status(403).send({ message: 'forbidden access' });
-    //   }
-    //   next();
-    // }
+
+    // users
+    app.post('/users', async (req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    })
 
 
-
-
-    // camps related api
+    // camps
     app.get('/camps', async (req, res) => {
       const filter = req.query;
       console.log(filter);
@@ -196,6 +170,41 @@ async function run() {
       const result = await reviewCollection.find(query).toArray();
       res.send(result);
     })
+
+
+    // jwt related api
+    // app.post('/jwt', async (req, res) => {
+    //   const user = req.body;
+    //   const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    //   res.send({ token });
+    // })
+    // middlewares 
+    // const verifyToken = (req, res, next) => {
+    //   // console.log('inside verify token', req.headers.authorization);
+    //   if (!req.headers.authorization) {
+    //     return res.status(401).send({ message: 'unauthorized access' });
+    //   }
+    //   const token = req.headers.authorization.split(' ')[1];
+    //   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    //     if (err) {
+    //       return res.status(401).send({ message: 'unauthorized access' })
+    //     }
+    //     req.decoded = decoded;
+    //     next();
+    //   })
+    // }
+    // // use verify admin after verifyToken
+    // const verifyAdmin = async (req, res, next) => {
+    //   const email = req.decoded.email;
+    //   const query = { email: email };
+    //   const user = await userCollection.findOne(query);
+    //   const isAdmin = user?.role === 'admin';
+    //   if (!isAdmin) {
+    //     return res.status(403).send({ message: 'forbidden access' });
+    //   }
+    //   next();
+    // }
+
 
 
     // Send a ping to confirm a successful connection
