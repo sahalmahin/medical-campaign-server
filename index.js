@@ -40,6 +40,7 @@ async function run() {
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
       res.send({ token });
     })
+
     // middlewares 
     const verifyToken = (req, res, next) => {
       if (!req.headers.authorization) {
@@ -54,6 +55,7 @@ async function run() {
         next();
       })
     }
+    
     // use verify admin after verifyToken
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded.email;
@@ -70,10 +72,24 @@ async function run() {
 
 
     // users
-    app.get('/users', async(req,res)=>{
+    app.get('/users', verifyToken, async(req,res)=>{
       console.log(req.headers);
       const result = await userCollection.find().toArray();
       res.send(result);
+    })
+
+    app.get('/users/admin/:email', verifyToken, async (req, res) => {
+      const email = req.params.email;
+      if (email !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidden access' })
+      }
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+      let admin = false;
+      if (user) {
+        admin = user?.role === 'admin';
+      }
+      res.send({ admin });
     })
 
     app.post('/users', async (req, res) => {
