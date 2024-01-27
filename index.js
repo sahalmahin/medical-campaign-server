@@ -55,7 +55,7 @@ async function run() {
         next();
       })
     }
-    
+
     // use verify admin after verifyToken
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded.email;
@@ -162,13 +162,13 @@ async function run() {
       const updatedCamp = req.body;
       const camp = {
         $set: {
-          camp: updatedCamp.camp,
+          name: updatedCamp.name,
           fees: updatedCamp.fees,
-          venue: updatedCamp.venue,
-          service: updatedCamp.service,
-          health: updatedCamp.health,
+          venue_location: updatedCamp.venue_location,
+          services: updatedCamp.services,
+          professionals: updatedCamp.professionals,
           audience: updatedCamp.audience,
-          photo: updatedCamp.photo,
+          image: updatedCamp.image,
           description: updatedCamp.description,
         }
       }
