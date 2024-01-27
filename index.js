@@ -68,17 +68,14 @@ async function run() {
       next();
     }
 
-
-
-
     // users
-    app.get('/users', verifyToken, async(req,res)=>{
+    app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
       console.log(req.headers);
       const result = await userCollection.find().toArray();
       res.send(result);
     })
 
-    app.get('/users/admin/:email', verifyToken, async (req, res) => {
+    app.get('/users/admin/:email', verifyToken, verifyAdmin, async (req, res) => {
       const email = req.params.email;
       if (email !== req.decoded.email) {
         return res.status(403).send({ message: 'forbidden access' })
@@ -92,7 +89,7 @@ async function run() {
       res.send({ admin });
     })
 
-    app.post('/users', async (req, res) => {
+    app.post('/users', verifyToken, verifyAdmin, async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
       const existingUser = await userCollection.findOne(query);
@@ -104,7 +101,7 @@ async function run() {
     })
 
     // camps
-    app.get('/camps', async (req, res) => {
+    app.get('/camps', verifyToken, verifyAdmin, async (req, res) => {
       const filter = req.query;
       console.log(filter);
       let query = {};
@@ -130,14 +127,14 @@ async function run() {
       res.send(result);
     })
 
-    app.post('/addCamp', async (req, res) => {
+    app.post('/addCamp', verifyToken, verifyAdmin, async (req, res) => {
       const addCamp = req.body;
       const result = await addCollection.insertOne(addCamp);
       res.send(result);
     })
 
     // add-a-camp
-    app.post('/add-a-camp', async (req, res) => {
+    app.post('/add-a-camp', verifyToken, verifyAdmin, async (req, res) => {
       const camp = req.body;
       const result = await addCampCollection.insertOne(camp);
       res.send(result);
@@ -148,14 +145,14 @@ async function run() {
       res.send(result);
     })
 
-    app.get('/add-a-camp/:id', async (req, res) => {
+    app.get('/add-a-camp/:id', verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
       const result = await addCampCollection.findOne(query);
       res.send(result);
     })
 
-    app.put('/add-a-camp/:id', async (req, res) => {
+    app.put('/add-a-camp/:id', verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
@@ -176,7 +173,7 @@ async function run() {
       res.send(result);
     })
 
-    app.delete('/add-a-camp/:id', async (req, res) => {
+    app.delete('/add-a-camp/:id', verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
       const result = await addCampCollection.deleteOne(query);
@@ -184,7 +181,7 @@ async function run() {
     });
 
     // payment intent
-    app.post('/create-payment-intent', async (req, res) => {
+    app.post('/create-payment-intent', verifyToken, verifyAdmin, async (req, res) => {
       const { price } = req.body;
       const amount = parseInt(price * 100);
       console.log(amount, 'amount inside the intent')
@@ -199,7 +196,7 @@ async function run() {
       })
     });
 
-    app.get('/payments/:email', async (req, res) => {
+    app.get('/payments/:email', verifyToken, verifyAdmin, async (req, res) => {
       const query = { email: req.params.email }
       if (req.params.email !== req.decoded.email) {
         return res.status(403).send({ message: 'forbidden access' });
